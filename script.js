@@ -7,10 +7,9 @@
 
 // $('#photo').attr('src', data.photo);
 
+// $('#photo').css('visibility', 'hidden');
+// $('#subtitle').css('visibility', 'hidden');
 
-
-$('#photo').css('visibility', 'hidden');
-$('#subtitle').css('visibility', 'hidden');
 // $('#photo').css('visibility', 'hidden');
 let currentPhoto = 4;
 let imagesData = [{
@@ -56,13 +55,35 @@ let imagesData = [{
 }];
 // $('#photo').attr('src', imagesData[currentPhoto].photo);
 
-setTimeout(function() {
-    nextImage(1);
-    $('#photo').css('visibility', '');
-    $('#subtitle').css('visibility', '');
 
-}, 900);
+function fromStart(index, timeout) {
+    $('#photo').css('visibility', 'hidden');
+    $('#subtitle').css('visibility', 'hidden');
+    setTimeout(function() {
+        nextImage(index, 1);
+        $('#photo').css('visibility', '');
+        $('#subtitle').css('visibility', '');
+        // $('#photo').toggleClass("hidden");
+        // $('#subtitle').toggleClass("hidden");
 
+    }, timeout);
+    nextImage(index + 1, -1);
+    $('.thumbnail').each(function(index, element) {
+        // element == this
+        $(this).css('opacity', '1');
+    });
+    $("[thumbnail-index='" + (index + 1) + "']").css('opacity', '.5');
+    // sadfd
+}
+
+// setTimeout(function() {
+//     preloadImage(currentPhoto - 1);
+//     fromStart(currentPhoto - 1);
+//     nextImage(currentPhoto - 1, 1);
+
+// }, 500);
+
+fromStart(currentPhoto, 500);
 
 
 
@@ -72,7 +93,7 @@ setTimeout(function() {
 
 $("#right").click(function(e) {
     e.preventDefault();
-    nextImage(1);
+    nextImage(currentPhoto, 1);
     // if (currentPhoto == imagesData.length - 1) {
     //     currentPhoto = 0;
     // } else {
@@ -85,7 +106,7 @@ $("#right").click(function(e) {
 
 $("#left").click(function(e) {
     e.preventDefault();
-    nextImage(-1)
+    nextImage(currentPhoto, -1)
         // if (currentPhoto == 0) {
         //     currentPhoto = imagesData.length - 1;
         // } else {
@@ -97,56 +118,58 @@ $("#left").click(function(e) {
 
 $(document).keydown(function(e) {
     if (e.key == 'j' || e.key == 'ArrowLeft') {
-        nextImage(-1);
+        nextImage(currentPhoto, -1);
     }
 });
 
 
 $(document).keydown(function(e) {
     if (e.key == 'k' || e.key == 'ArrowRight') {
-        nextImage(1);
+        nextImage(currentPhoto, 1);
     }
 });
 
 
 $(document).keydown(function(e) {
     var code = e.keyCode || e.which;
-    console.log(code);
-    console.log(e.key);
-    console.log(e.keyCode);
+    // console.log(code);
+    // console.log(e.key);
+    // console.log(e.keyCode);
     // console.log(e.keydown);
-    console.log(e.which);
+    // console.log(e.which);
     // if (e.keyCode == 26 | e.keyCode == 107) {
     //     nextImage(1);
     // }
 });
 
 function moveIndex(currentPosition, array, moveItBy) {
-    console.log(currentPosition, moveItBy);
-    nextPosition = currentPosition + moveItBy;
-    console.log(nextPosition);
+    // console.log(currentPosition, moveItBy);
+    cp = parseInt(currentPosition, 10);
+    mib = parseInt(moveItBy, 10);
+    nextPosition = cp + mib;
+    // console.log(nextPosition);
     if (nextPosition < 0) {
-        nextPosition = array.length + currentPosition + moveItBy;
+        nextPosition = array.length + cp + mib;
     }
-    console.log(nextPosition);
+    // console.log(nextPosition);
 
     if (nextPosition >= array.length) {
-        nextPosition = currentPosition + moveItBy - array.length;
+        nextPosition = cp + mib - array.length;
     }
-    console.log(nextPosition);
+    // console.log(nextPosition);
     return nextPosition;
 }
 
-function preloadImage(currentPhoto) {
-    preloadImageIndex = moveIndex(currentPhoto, imagesData, 1)
+function preloadImage(indexOfPhoto) {
+    preloadImageIndex = moveIndex(indexOfPhoto, imagesData, 1)
     $('.photos-1').attr('src', imagesData[preloadImageIndex].photo);
-    preloadImageIndex = moveIndex(currentPhoto, imagesData, -1)
+    preloadImageIndex = moveIndex(indexOfPhoto, imagesData, -1)
     $('.photos-2').attr('src', imagesData[preloadImageIndex].photo);
 }
 
-function nextImage(direction) {
+function nextImage(currentIndex, direction) {
     // $('#subtitle').css('display', 'none');
-    currentPhoto = moveIndex(currentPhoto, imagesData, direction);
+    currentPhoto = moveIndex(currentIndex, imagesData, direction);
 
     // $('#photo').css('display', 'none');
     $('#photo').attr('src', imagesData[currentPhoto].photo);
@@ -180,36 +203,29 @@ function nextImage(direction) {
     // $(selector).attr(attributeName, value);
 
 }
+// console.log(imagesData)
+let counter = 0;
+imagesData.forEach(element => {
+    // console.log(element.photo);
+    $('#thumbnails-container').append(`<img src="${element.photo}" class="thumbnail" thumbnail-index="${counter}"></img>`);
+    counter++;
+});
 
-// $('#photo').append('<p>whatisit</p>');
+$('.thumbnail').click(function(e) {
+    e.preventDefault();
+    let newImageIndex = $(event.target).attr('thumbnail-index');
+    preloadImage(newImageIndex - 1);
+    fromStart(newImageIndex - 1, 20);
+    // $('#photo').css('visibility', 'hidden');
+    // currentPhoto = newImageIndex - 3;
+    // console.log(event.target);
+    // console.log(event.target.attr('thumbnail-index'));
+    // console.log(e);
+    // console.log(event.target.className);
+    // console.log($(event.target).attr('thumbnail-index'));
+    // preloadImage($(event.target).attr('thumbnail-index'));
+    // currentPhoto = $(event.target).attr('thumbnail-index') - 1;
 
-// $('#left').click(function(e) {
-//     e.preventDefault();
-
-// });
-
-// $('#right').click(function(e) {
-//     e.preventDefault();
-
-// });
-
-// $('#thumbnails').click(function(e) {
-//     e.preventDefault();
-
-// });
-
-// function image(title, text, filename) {
-//     this.title = '',
-//         this.text = '',
-//         this.filename = '',
-// }
-
-// let images
-
-
-// let loadimage = (image) => {
-
-// }
-setTimeout(function() {
-    nextImage(1);
-}, 500);
+    // nextImage(currentPhoto, 1);
+    // console.log($(this).attr('thumbnail-index');)
+});
