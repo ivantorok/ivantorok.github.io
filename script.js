@@ -201,6 +201,11 @@ function nextImage(currentIndex, direction) {
 
     // $('#subtitle').attr('margin-left', currentLeftMargin);
     // $(selector).attr(attributeName, value);
+    $('.thumbnail').each(function(index, element) {
+        // element == this
+        $(this).css('opacity', '1');
+    });
+    $("[thumbnail-index='" + (currentPhoto) + "']").css('opacity', '.5');
 
 }
 // console.log(imagesData)
